@@ -1,0 +1,30 @@
+import { bootstrapApplication } from '@angular/platform-browser';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { ConfirmationService, MessageService } from 'primeng/api';
+
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app-routing.module';
+import { AuthGuard } from './app/guards/auth-guard.service';
+import { AuthInterceptor } from './app/interceptors/auth.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(
+      withInterceptorsFromDi()
+    ),
+    provideAnimations(),
+    provideAnimationsAsync(),
+    ConfirmationService,
+    MessageService,
+    AuthGuard,
+    { 
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true 
+    }
+  ]
+}).catch(err => console.error(err));
